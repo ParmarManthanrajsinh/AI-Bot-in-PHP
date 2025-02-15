@@ -155,8 +155,8 @@ function getGeminiResponse($message, $apiKey, $model)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #121212; color: #ffffff; }
-        .chat-container { max-width: 800px; margin: auto; background-color: #1e1e1e; padding: 15px; border-radius: 10px; }
-        .chat-history { max-height: 400px; overflow-y: auto; padding: 15px; border: 1px solid #333; border-radius: 5px; background-color: #252525; width: 100%; }
+        .chat-container { max-width: 600px; margin: auto; background-color: #1e1e1e; padding: 15px; border-radius: 10px; }
+        .chat-history { max-height: 400px; min-height: 300px; overflow-y: auto; padding: 15px; border: 1px solid #333; border-radius: 5px; background-color: #252525; }
         .message { padding: 10px; border-radius: 10px; margin-bottom: 10px; }
         .user { background-color: #007bff; color: white; align-self: flex-end; }
         .assistant { background-color: #444; color: white; align-self: flex-start; }
@@ -165,7 +165,7 @@ function getGeminiResponse($message, $apiKey, $model)
         .btn-primary { background-color: #007bff; border: none; }
         .btn-primary:hover { background-color: #0056b3; }
     </style>
-</head>
+</head
 <body>
     <div class="container my-5">
         <h1 class="mb-4 text-center">AI Chat Bot</h1>
