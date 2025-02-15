@@ -34,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Modified insert function without session ID
-function insertMessage($conn, $role, $content) {
+function insertMessage($conn, $role, $content)
+{
     $stmt = $conn->prepare("INSERT INTO chat_messages (role, content) VALUES (?, ?)");
     $stmt->bind_param("ss", $role, $content);
     if (!$stmt->execute()) {
@@ -115,49 +116,48 @@ function getGeminiResponse($message, $apiKey, $model)
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Chat Bot</title>
-  <!-- Google Font for modern look -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- External CSS file -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Chat Bot</title>
+    <!-- Google Font for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- External CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="container">
-    <h1 class="text-center my-4">AI Chat Bot</h1>
-    <div class="chat-container">
-      <div class="chat-history">
-        <?php foreach ($chatHistory as $entry): ?>
-          <div class="chat-message <?= $entry['role'] ?>">
-            <?php if ($entry['role'] === 'assistant'): ?>
-              <div class="avatar">A</div>
-            <?php endif; ?>
-            <div class="message-bubble">
-              <strong><?= ucfirst($entry['role']) ?>:</strong><br>
-              <?= nl2br(htmlspecialchars($entry['content'])) ?>
+    <div class="container">
+        <h1 class="text-center my-4">AI Chat Bot</h1>
+        <div class="chat-container">
+            <div class="chat-history">
+                <?php foreach ($chatHistory as $entry): ?>
+                    <div class="chat-message <?= $entry['role'] ?>">
+
+                        <div class="message-bubble">
+                            <?= nl2br(htmlspecialchars($entry['content'])) ?>
+                        </div>
+
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <?php if ($entry['role'] === 'user'): ?>
-              <div class="avatar">U</div>
-            <?php endif; ?>
-          </div>
-        <?php endforeach; ?>
-      </div>
-      <form method="POST" class="chat-input">
-        <div class="input-group">
-          <input type="text" name="message" class="form-control" placeholder="Type your message..." required autocomplete="off">
-          <button type="submit" class="btn btn-primary">Send</button>
+            <form method="POST" class="chat-input">
+                <div class="input-group">
+                    <input type="text" name="message" class="form-control" placeholder="Type your message..." required
+                        autocomplete="off">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Auto-scroll chat history to bottom on load
-    const chatHistoryDiv = document.querySelector('.chat-history');
-    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-scroll chat history to bottom on load
+        const chatHistoryDiv = document.querySelector('.chat-history');
+        chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+    </script>
 </body>
+
 </html>
