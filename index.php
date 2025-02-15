@@ -165,7 +165,7 @@ function getGeminiResponse($message, $apiKey, $model)
         .btn-primary { background-color: #007bff; border: none; }
         .btn-primary:hover { background-color: #0056b3; }
     </style>
-</head
+</head>
 <body>
     <div class="container my-5">
         <h1 class="mb-4 text-center">AI Chat Bot</h1>
