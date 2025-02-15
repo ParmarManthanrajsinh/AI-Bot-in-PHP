@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 // Database Configuration
 $dbHost = 'localhost';
 $dbUser = 'root';
@@ -15,12 +13,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Generate unique session ID for chat history
-if (!isset($_SESSION['chat_session_id'])) {
-    $_SESSION['chat_session_id'] = uniqid();
-}
-$sessionId = $_SESSION['chat_session_id'];
-
 // API Configuration
 $apiKey = 'AIzaSyBqDbUeIzw_v5IMDEQ5FVXyG17bmNVLYNw'; // Replace with your actual API key
 $model = 'gemini-pro';
@@ -30,38 +22,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message']);
 
     if (!empty($message)) {
-        // Insert user message into database
-        insertMessage($conn, $sessionId, 'user', $message);
+        // Insert user message into database without session ID
+        insertMessage($conn, 'user', $message);
 
         // Get Gemini response
         $response = getGeminiResponse($message, $apiKey, $model);
 
-        // Insert assistant response into database
-        insertMessage($conn, $sessionId, 'assistant', $response);
+        // Insert assistant response into database without session ID
+        insertMessage($conn, 'assistant', $response);
     }
 }
 
-// Function to insert messages into database
-function insertMessage($conn, $sessionId, $role, $content)
-{
-    $stmt = $conn->prepare("INSERT INTO chat_messages (session_id, role, content) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $sessionId, $role, $content);
+// Modified insert function without session ID
+function insertMessage($conn, $role, $content) {
+    $stmt = $conn->prepare("INSERT INTO chat_messages (role, content) VALUES (?, ?)");
+    $stmt->bind_param("ss", $role, $content);
     if (!$stmt->execute()) {
-        error_log("Error inserting message: " . $stmt->error);
+        error_log("Error inserting message: " . $stmt->execute());
     }
     $stmt->close();
 }
 
-// Retrieve chat history from database
+// Retrieve all chat history from database
 $chatHistory = [];
-$stmt = $conn->prepare("SELECT role, content FROM chat_messages WHERE session_id = ? ORDER BY timestamp ASC");
-$stmt->bind_param("s", $sessionId);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query("SELECT role, content FROM chat_messages ORDER BY timestamp ASC");
 while ($row = $result->fetch_assoc()) {
     $chatHistory[] = $row;
 }
-$stmt->close();
 
 // Close database connection
 $conn->close();

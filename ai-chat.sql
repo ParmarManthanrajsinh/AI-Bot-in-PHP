@@ -30,7 +30,6 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `chat_messages`;
 CREATE TABLE IF NOT EXISTS `chat_messages` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `session_id` varchar(255) NOT NULL,
   `role` enum('user','assistant') NOT NULL,
   `content` text NOT NULL,
   `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
