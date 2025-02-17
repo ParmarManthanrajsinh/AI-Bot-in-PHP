@@ -13,19 +13,36 @@ function insertMessage($conn, $role, $content)
     $stmt->close();
 }
 
+function deleteAllMessage($conn)
+{
+    $stmt = $conn->prepare("TRUNCATE TABLE `ai-chat`.`chat_messages`");
+    if (!$stmt->execute()) {
+        error_log("Error inserting message: " . $stmt->execute());
+    }
+    $stmt->close();
+}
+
 // Process user input
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $message = trim($_POST['message']);
 
-    if (!empty($message)) {
-        // Insert user message into database without session ID
-        insertMessage($conn, 'user', $message);
+    if(isset($_POST['message']))
+    {
+        $message = trim($_POST['message']);
 
-        // Get Gemini response
-        $response = getGeminiResponse($message, $apiKey, $model);
+        if (!empty($message)) {
+            // Insert user message into database without session ID
+            insertMessage($conn, 'user', $message);
 
-        // Insert assistant response into database without session ID
-        insertMessage($conn, 'assistant', $response);
+            // Get Gemini response
+            $response = getGeminiResponse($message, $apiKey, $model);
+
+            // Insert assistant response into database without session ID
+            insertMessage($conn, 'assistant', $response);
+        }
+    }
+
+    if (isset($_POST['delete'])) {
+        deleteAllMessage($conn);
     }
 }
 
@@ -78,6 +95,10 @@ $conn->close();
                     <input type="text" name="message" class="form-control" placeholder="Type your message..." required>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </div>
+            </form>
+
+            <form method="POST" class="delete-chat-container">
+                <button type="submit" class="btn btn-danger" name="delete">Delete Chat</button>
             </form>
         </div>
     </div>
