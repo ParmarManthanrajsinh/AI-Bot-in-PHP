@@ -1,7 +1,7 @@
 <?php
 
 // API Configuration
-$apiKey = 'AIzaSyBqDbUeIzw_v5IMDEQ5FVXyG17bmNVLYNw'; // Replace with your actual API key
+$apiKey = 'api-key'; // Replace with your actual API key
 $model = 'gemini-pro';
 
 // Gemini API function with combined cURL options
