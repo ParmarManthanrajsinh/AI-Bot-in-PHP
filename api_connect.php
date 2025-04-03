@@ -2,12 +2,12 @@
 
 // API Configuration
 $apiKey = 'api-key'; // Replace with your actual API key
-$model = 'gemini-pro';
+$model = 'gemini-2.0-flash';
 
 // Gemini API function with combined cURL options
 function getGeminiResponse($message, $apiKey, $model)
 {
-    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey";
 
     $data = [
         'contents' => [
