@@ -1,12 +1,50 @@
 <?php
 
 // API Configuration
-$apiKey = 'api-key'; // Replace with your actual API key
+$apiKey = 'AIzaSyBqDbUeIzw_v5IMDEQ5FVXyG17bmNVLYNw'; // Replace with your actual API key
 $model = 'gemini-2.0-flash';
 
-// Gemini API function with combined cURL options
-function getGeminiResponse($message, $apiKey, $model)
+// Log API performance metrics
+function logApiPerformance(float $responseTime, int $httpCode, string $model): void
 {
+    global $conn;
+
+    // Only log if we have a database connection
+    if (!isset($conn) || !($conn instanceof mysqli)) {
+        return;
+    }
+
+    $isSuccess = ($httpCode === 200) ? 1 : 0;
+
+    // Check if api_performance table exists, create if not
+    $tableCheck = $conn->query("SHOW TABLES LIKE 'api_performance'");
+    if ($tableCheck->num_rows === 0) {
+        $conn->query("CREATE TABLE IF NOT EXISTS `api_performance` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `model` varchar(50) NOT NULL,
+            `response_time` float NOT NULL,
+            `http_code` int NOT NULL,
+            `is_success` tinyint(1) NOT NULL,
+            `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`),
+            KEY `model_idx` (`model`),
+            KEY `timestamp_idx` (`timestamp`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+    }
+
+    // Log performance data
+    $stmt = $conn->prepare("INSERT INTO api_performance (model, response_time, http_code, is_success) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sdii", $model, $responseTime, $httpCode, $isSuccess);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Gemini API function with combined cURL options
+function getGeminiResponse($message, $apiKey, $model, $userId = null, $sessionId = null)
+{
+    // Start timing for response time measurement
+    $startTime = microtime(true);
+
     $url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey";
 
     $data = [
@@ -40,12 +78,35 @@ function getGeminiResponse($message, $apiKey, $model)
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
+    // Calculate response time
+    $responseTime = microtime(true) - $startTime;
+
+    // Store response time for analytics
+    logApiPerformance($responseTime, $httpCode, $model);
+
+
     if ($errno) {
-        return "cURL Error ({$errno}): " . $error;
+        $errorMessage = "cURL Error ({$errno}): " . $error;
+
+        // Log error if analytics is available
+        if (function_exists('logError') && $userId && $sessionId) {
+            global $conn;
+            logError($conn, 'API_CURL_ERROR', $errorMessage, $userId, $sessionId);
+        }
+
+        return $errorMessage;
     }
 
     if ($httpCode !== 200) {
-        return "API Error: HTTP {$httpCode} - " . ($response ?: 'No response');
+        $errorMessage = "API Error: HTTP {$httpCode} - " . ($response ?: 'No response');
+
+        // Log error if analytics is available
+        if (function_exists('logError') && $userId && $sessionId) {
+            global $conn;
+            logError($conn, 'API_HTTP_ERROR', $errorMessage, $userId, $sessionId);
+        }
+
+        return $errorMessage;
     }
 
     $responseData = json_decode($response, true);
