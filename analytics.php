@@ -13,7 +13,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once 'db_connect.php';
-require_once 'init_analytics_db.php';
 
 // Get or create a unique user identifier
 function getUserId(): string
