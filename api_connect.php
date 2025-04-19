@@ -16,22 +16,6 @@ function logApiPerformance(float $responseTime, int $httpCode, string $model): v
 
     $isSuccess = ($httpCode === 200) ? 1 : 0;
 
-    // Check if api_performance table exists, create if not
-    $tableCheck = $conn->query("SHOW TABLES LIKE 'api_performance'");
-    if ($tableCheck->num_rows === 0) {
-        $conn->query("CREATE TABLE IF NOT EXISTS `api_performance` (
-            `id` int NOT NULL AUTO_INCREMENT,
-            `model` varchar(50) NOT NULL,
-            `response_time` float NOT NULL,
-            `http_code` int NOT NULL,
-            `is_success` tinyint(1) NOT NULL,
-            `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`),
-            KEY `model_idx` (`model`),
-            KEY `timestamp_idx` (`timestamp`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
-    }
-
     // Log performance data
     $stmt = $conn->prepare("INSERT INTO api_performance (model, response_time, http_code, is_success) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sdii", $model, $responseTime, $httpCode, $isSuccess);

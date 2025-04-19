@@ -2,29 +2,6 @@
 session_start();
 include "../db_connect.php";
 
-// Check if admin users table exists
-$tableCheck = $conn->query("SHOW TABLES LIKE 'admin_users'");
-if ($tableCheck->num_rows === 0) {
-    // Create default admin user if table doesn't exist
-    $conn->query("CREATE TABLE IF NOT EXISTS `admin_users` (
-        `admin_id` int NOT NULL AUTO_INCREMENT,
-        `username` varchar(50) NOT NULL,
-        `password_hash` varchar(255) NOT NULL,
-        `email` varchar(100) DEFAULT NULL,
-        `last_login` timestamp NULL DEFAULT NULL,
-        PRIMARY KEY (`admin_id`),
-        UNIQUE KEY `username` (`username`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
-    
-    // Insert default admin user (username: admin, password: admin123)
-    $defaultUsername = 'admin';
-    $defaultPassword = password_hash('admin123', PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("INSERT INTO admin_users (username, password_hash) VALUES (?, ?)");
-    $stmt->bind_param("ss", $defaultUsername, $defaultPassword);
-    $stmt->execute();
-    $stmt->close();
-}
-
 $error = '';
 
 // Process login form
