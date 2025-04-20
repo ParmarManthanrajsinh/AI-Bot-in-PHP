@@ -81,72 +81,200 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI Chat Bot</title>
-
-    <!-- Enhanced Google Fonts for professional typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e0e0e0;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(60, 60, 60, 0.5) rgba(30, 30, 30, 0.3);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.3);
+            border-radius: 3px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(60, 60, 60, 0.5);
+            border-radius: 3px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(80, 80, 80, 0.7);
+        }
+
+        .message-ai {
+            background-color: #2d2d2d;
+            border-radius: 0 18px 18px 18px;
+            max-width: 80%;
+            color: #e0e0e0;
+        }
+
+        .message-user {
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 18px 0 18px 18px;
+            max-width: 80%;
+        }
+
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s steps(3, end) infinite;
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+
+            to {
+                width: 100%
+            }
+        }
+
+        .input-area {
+            border-top: 1px solid #444444;
+            background-color: #1e1e1e;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-meta {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="text-center my-4">AI Chat Assistant</h1>
-        <div class="chat-container">
-            <div class="chat-history">
-                <?php
-                foreach ($chatHistory as $entry) {
-
-                    // prevents malicious code injection.
-                    $role = htmlspecialchars($entry['role']);
-                    // converts newline characters into HTML line breaks
-                    $content = nl2br(htmlspecialchars($entry['content']));
-
-                    echo "<div class=\"chat-message {$role}\">";
-                    echo "<div class=\"message-bubble\">{$content}</div>";
-                    echo "</div>";
-                }
-                ?>
-            </div>
-            <form method="POST" class="chat-input">
-                <div class="input-group">
-                    <input type="text" name="message" class="form-control" placeholder="Type your message..." required>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i> Send</button>
+    <!-- Header -->
+    <header class="bg-dark shadow-sm py-3 px-4 text-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
+                    <i class="fas fa-robot text-white"></i>
                 </div>
-            </form>
-
-            <div class="d-flex justify-content-center">
-                <form method="POST" class="delete-chat-container">
-                    <button type="submit" class="btn btn-danger" name="delete"><i class="fas fa-trash-alt me-1"></i> Clear Chat</button>
-                    <button type="submit" class="btn btn-success" name="admin"><i class="fas fa-lock me-2"></i>Admin Login</button>
+                <h1 class="h5 mb-0 ms-3">AI Assistant</h1>
+            </div>
+            <div>
+                <form method="POST" class="d-inline">
+                    <button type="submit" name="delete" class="btn btn-sm btn-outline-danger me-2 text-light">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button type="submit" name="admin" class="btn btn-sm btn-outline-success text-light">
+                        <i class="fas fa-lock"></i>
+                    </button>
                 </form>
             </div>
         </div>
+    </header>
+
+    <!-- Chat container -->
+    <div class="chat-container p-3" id="chatBox">
+        <!-- Welcome message -->
+        <div class="d-flex mb-3">
+            <div class="message-ai p-3 shadow-sm">
+                <p class="mb-1">Hello! I'm your AI assistant. How can I help you today?</p>
+                <div class="message-meta mt-2">
+                    <span>AI</span>
+                    <span class="mx-1">•</span>
+                    <span>Just now</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display chat history -->
+        <?php foreach ($chatHistory as $entry): ?>
+            <div class="d-flex mb-3 <?php echo $entry['role'] === 'user' ? 'justify-content-end' : 'justify-content-start'; ?>">
+                <div class="<?php echo $entry['role'] === 'user' ? 'message-user' : 'message-ai'; ?> p-3 shadow-sm">
+                    <p class="mb-1"><?php echo nl2br(htmlspecialchars($entry['content'])); ?></p>
+                    <div class="message-meta mt-2">
+                        <span><?php echo $entry['role'] === 'user' ? 'You' : 'AI'; ?></span>
+                        <span class="mx-1">•</span>
+                        <span>Sent</span>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Input area -->
+    <div class="input-area p-3">
+        <form method="POST">
+            <div class="d-flex align-items-end">
+                <div class="flex-grow-1 bg-dark rounded-pill px-3 py-2 me-2 border border-secondary">
+                    <textarea name="message" id="userInput" placeholder="Type your message..." rows="1"
+                        class="form-control border-0 bg-transparent shadow-none resize-none text-light"
+                        style="overflow-y: auto; max-height: 120px;"></textarea>
+                </div>
+                <button type="submit" id="sendButton" class="send-btn" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+        <p class="text-secondary text-center small mt-2 mb-0">AI may produce inaccurate information. Consider checking
+            important details.</p>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // Auto-scroll chat history to bottom on load with smooth animation
-        const chatHistoryDiv = document.querySelector('.chat-history');
-        chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-
-        // Add focus to input field when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('input[name="message"]').focus();
-        });
+            const chatBox = document.getElementById('chatBox');
+            const userInput = document.getElementById('userInput');
 
-        // Add smooth scrolling when new messages are added
-        const form = document.querySelector('.chat-input');
-        form.addEventListener('submit', function() {
-            // Add a small delay to ensure the DOM is updated with the new message
-            setTimeout(function() {
-                chatHistoryDiv.scrollTo({
-                    top: chatHistoryDiv.scrollHeight,
-                    behavior: 'smooth'
-                });
-            }, 100);
+            // Auto-resize textarea
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Send message on Enter key (but allow Shift+Enter for new lines)
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.closest('form').submit();
+                }
+            });
+
+            // Initial scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
         });
     </script>
 </body>
