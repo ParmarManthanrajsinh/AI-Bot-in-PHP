@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Analytics Module for AI Bot
- * 
- * This file implements user tracking, session management, and interaction logging
- * for the AI Bot analytics system.
- **/
-
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

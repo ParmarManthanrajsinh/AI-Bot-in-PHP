@@ -1,6 +1,6 @@
 <?php
-include "auth_check.php"; // Check admin authentication
-include "../db_connect.php"; // Database connection
+include "auth_check.php";
+include "../db_connect.php";
 
 // Set default date range (last 7 days)
 $endDate = date('Y-m-d');
@@ -10,23 +10,6 @@ $startDate = date('Y-m-d', strtotime('-7 days'));
 if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
     $startDate = $_GET['start_date'];
     $endDate = $_GET['end_date'];
-}
-
-// Check if api_performance table exists
-$tableCheck = $conn->query("SHOW TABLES LIKE 'api_performance'");
-if ($tableCheck->num_rows === 0) {
-    // Create the table if it doesn't exist
-    $conn->query("CREATE TABLE IF NOT EXISTS `api_performance` (
-        `id` int NOT NULL AUTO_INCREMENT,
-        `model` varchar(50) NOT NULL,
-        `response_time` float NOT NULL,
-        `http_code` int NOT NULL,
-        `is_success` tinyint(1) NOT NULL,
-        `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (`id`),
-        KEY `model_idx` (`model`),
-        KEY `timestamp_idx` (`timestamp`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
 }
 
 // Get performance metrics

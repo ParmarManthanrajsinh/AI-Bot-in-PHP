@@ -1,6 +1,6 @@
 <?php
-include "auth_check.php"; // Check admin authentication
-include "../db_connect.php"; // Database connection
+include "auth_check.php";
+include "../db_connect.php";
 
 // Set default date range (last 7 days)
 $endDate = date('Y-m-d');
@@ -10,23 +10,6 @@ $startDate = date('Y-m-d', strtotime('-7 days'));
 if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
     $startDate = $_GET['start_date'];
     $endDate = $_GET['end_date'];
-}
-
-// Check if error_logs table exists
-$tableCheck = $conn->query("SHOW TABLES LIKE 'error_logs'");
-if ($tableCheck->num_rows === 0) {
-    // Create the table if it doesn't exist
-    $conn->query("CREATE TABLE IF NOT EXISTS `error_logs` (
-        `error_id` int NOT NULL AUTO_INCREMENT,
-        `user_id` varchar(64) DEFAULT NULL,
-        `session_id` varchar(64) DEFAULT NULL,
-        `error_type` varchar(50) DEFAULT NULL,
-        `error_message` text,
-        `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (`error_id`),
-        KEY `user_id` (`user_id`),
-        KEY `session_id` (`session_id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
 }
 
 // Get error metrics

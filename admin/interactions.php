@@ -1,6 +1,6 @@
 <?php
-include "auth_check.php"; // Check admin authentication
-include "../db_connect.php"; // Database connection
+include "auth_check.php";
+include "../db_connect.php";
 
 // Set default date range (last 7 days)
 $endDate = date('Y-m-d');
