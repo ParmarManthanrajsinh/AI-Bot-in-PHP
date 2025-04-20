@@ -82,7 +82,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat Assistant</title>
+    <title>AI Chat Bot</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
@@ -224,7 +224,7 @@ $conn->close();
                     style="width: 40px; height: 40px;">
                     <i class="fas fa-robot text-white"></i>
                 </div>
-                <h1 class="h5 mb-0 ms-3">AI Assistant</h1>
+                <h1 class="h5 mb-0 ms-3">AI Bot</h1>
             </div>
             <div>
                 <form method="POST" class="d-inline">
