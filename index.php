@@ -158,6 +158,12 @@ $conn->close();
             background-color: #1e1e1e;
         }
 
+        .input-container {
+            background-color: #2d2d2d;
+            border-radius: 4px;
+            border: 1px solid #444444;
+        }
+
         .send-btn {
             width: 48px;
             height: 48px;
@@ -176,6 +182,35 @@ $conn->close();
         .message-meta {
             font-size: 0.75rem;
             opacity: 0.8;
+        }
+
+        /* Textarea placeholder color */
+        #userInput::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Textarea scrollbar */
+        #userInput {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(60, 60, 60, 0.5) rgba(30, 30, 30, 0.3);
+        }
+
+        #userInput::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #userInput::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.3);
+            border-radius: 2px;
+        }
+
+        #userInput::-webkit-scrollbar-thumb {
+            background: rgba(60, 60, 60, 0.5);
+            border-radius: 2px;
+        }
+
+        #userInput::-webkit-scrollbar-thumb:hover {
+            background: rgba(80, 80, 80, 0.7);
         }
     </style>
 </head>
@@ -217,7 +252,7 @@ $conn->close();
                 </div>
             </div>
         </div>
-
+        
         <!-- Display chat history -->
         <?php foreach ($chatHistory as $entry): ?>
             <div class="d-flex mb-3 <?php echo $entry['role'] === 'user' ? 'justify-content-end' : 'justify-content-start'; ?>">
@@ -237,7 +272,7 @@ $conn->close();
     <div class="input-area p-3">
         <form method="POST">
             <div class="d-flex align-items-end">
-                <div class="flex-grow-1 bg-dark rounded-pill px-3 py-2 me-2 border border-secondary">
+                <div class="flex-grow-1 input-container px-3 py-2 me-2">
                     <textarea name="message" id="userInput" placeholder="Type your message..." rows="1"
                         class="form-control border-0 bg-transparent shadow-none resize-none text-light"
                         style="overflow-y: auto; max-height: 120px;"></textarea>
