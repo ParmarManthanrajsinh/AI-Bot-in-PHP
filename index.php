@@ -87,6 +87,77 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Highlight.js CSS (Choose a theme, e.g., dark) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+
+    <!-- Highlight.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatBox = document.getElementById('chatBox');
+            const userInput = document.getElementById('userInput');
+
+            // Auto-resize textarea
+            userInput.addEventListener('input', () => {
+                userInput.style.height = 'auto';
+                userInput.style.height = `${userInput.scrollHeight}px`;
+            });
+
+            // Submit on Enter (but allow Shift+Enter)
+            userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    userInput.closest('form').submit();
+                }
+            });
+
+            // Function to scroll to bottom
+            function scrollToBottom() {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            // Render markdown + syntax highlighting
+            document.querySelectorAll('.markdown-output').forEach(el => {
+                const md = el.getAttribute('data-md');
+                el.innerHTML = marked.parse(md);
+
+                // Highlight code blocks
+                el.querySelectorAll('pre code').forEach(block => {
+                    hljs.highlightElement(block);
+                });
+            });
+
+            // Scroll to bottom after a slight delay to ensure content is rendered
+            setTimeout(scrollToBottom, 100);
+
+            // Also scroll after images and other resources are loaded
+            window.addEventListener('load', scrollToBottom);
+
+            // Add MutationObserver to detect changes to the chat container
+            const observer = new MutationObserver(scrollToBottom);
+            observer.observe(chatBox, {
+                childList: true,
+                subtree: true
+            });
+        });
+    </script>
+
+    <!-- MathJax for rendering LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+
     <style>
         body {
             background-color: #121212;
@@ -252,12 +323,18 @@ $conn->close();
                 </div>
             </div>
         </div>
-        
+
         <!-- Display chat history -->
         <?php foreach ($chatHistory as $entry): ?>
-            <div class="d-flex mb-3 <?php echo $entry['role'] === 'user' ? 'justify-content-end' : 'justify-content-start'; ?>">
+            <div
+                class="d-flex mb-3 <?php echo $entry['role'] === 'user' ? 'justify-content-end' : 'justify-content-start'; ?>">
                 <div class="<?php echo $entry['role'] === 'user' ? 'message-user' : 'message-ai'; ?> p-3 shadow-sm">
-                    <p class="mb-1"><?php echo nl2br(htmlspecialchars($entry['content'])); ?></p>
+
+                    <?php if ($entry['role'] === 'assistant'): ?>
+                        <div class="mb-1 markdown-output" data-md="<?php echo htmlspecialchars($entry['content']); ?>"></div>
+                    <?php else: ?>
+                        <p class="mb-1"><?php echo nl2br(htmlspecialchars($entry['content'])); ?></p>
+                    <?php endif; ?>
                     <div class="message-meta mt-2">
                         <span><?php echo $entry['role'] === 'user' ? 'You' : 'AI'; ?></span>
                         <span class="mx-1">•</span>
@@ -277,7 +354,8 @@ $conn->close();
                         class="form-control border-0 bg-transparent shadow-none resize-none text-light"
                         style="overflow-y: auto; max-height: 120px;"></textarea>
                 </div>
-                <button type="submit" id="sendButton" class="send-btn" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
+                <button type="submit" id="sendButton" class="send-btn"
+                    style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -289,29 +367,8 @@ $conn->close();
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatBox = document.getElementById('chatBox');
-            const userInput = document.getElementById('userInput');
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-            // Auto-resize textarea
-            userInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
-
-            // Send message on Enter key (but allow Shift+Enter for new lines)
-            userInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    this.closest('form').submit();
-                }
-            });
-
-            // Initial scroll to bottom
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    </script>
 </body>
 
 </html>
