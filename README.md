@@ -72,6 +72,78 @@ Manages data persistence across the application with tables for:
 - Admin user accounts
 - Session data
 
+## Installation Guide
+
+Follow these steps to set up the AI Chat Bot with Analytics Dashboard on your local development environment.
+
+### Prerequisites
+
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Web server (Apache/Nginx)
+- Google Generative Language API key
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/ai-bot.git
+cd ai-bot
+```
+
+### Step 2: Database Setup
+
+1. Create a new MySQL database for the project
+
+```sql
+CREATE DATABASE ai_bot_db;
+```
+
+2. Import the database schema
+
+```bash
+mysql -u username -p ai_bot_db < database/schema.sql
+```
+
+### Step 3: API Configuration
+
+1. Obtain a Google Generative Language API key from the [Google AI Studio](https://ai.google.dev/)
+2. Add your API key to the configuration file
+
+```php
+// API configuration
+$api_config = [
+    'gemini_api_key' => 'YOUR_GEMINI_API_KEY',
+    'model' => 'gemini-pro'
+];
+```
+
+### Step 4: Web Server Configuration
+
+#### For Apache (with WAMP/XAMPP)
+
+Ensure your project is in the web server's document root (e.g., `www` or `htdocs` folder).
+
+### Step 5: Launch the Application
+
+1. Start your web server and MySQL services
+2. Open your browser and navigate to:
+   - http://localhost/ai-bot (for WAMP/XAMPP)
+   - http://ai-bot.local (if using custom domain configuration)
+
+### Step 6: Admin Dashboard Access
+
+1. Navigate to http://localhost/ai-bot/admin
+2. Log in with the default credentials:
+   - Username: `admin`
+   - Password: `admin123`
+3. **Important**: Change the default password immediately after first login
+
+### Troubleshooting
+
+- **Database Connection Issues**: Verify your database credentials and ensure MySQL service is running
+- **API Key Errors**: Confirm your Gemini API key is valid and has the necessary permissions
+- **Permission Problems**: Ensure the web server has read/write permissions for the project directory
+
 ## Coding
 
 ### Core Chat Processing Logic
