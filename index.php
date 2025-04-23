@@ -1,9 +1,9 @@
 <?php
 include "db_connect.php";
 include "api_connect.php";
-include "analytics.php"; // Include analytics module
+include "analytics.php";
 
-// Modified insert function with analytics tracking
+// Insert function with analytics tracking
 function insertMessage($conn, $role, $content, $userId = null, $sessionId = null, $responseTime = null)
 {
     // If analytics is enabled and we have user/session IDs
@@ -148,7 +148,10 @@ $conn->close();
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
+                inlineMath: [
+                    ['$', '$'],
+                    ['\\(', '\\)']
+                ]
             },
             svg: {
                 fontCache: 'global'

@@ -135,7 +135,6 @@ while ($row = $result->fetch_assoc()) {
     $timeDistribution[] = $row;
 }
 
-// Close database connection
 $conn->close();
 ?>
 

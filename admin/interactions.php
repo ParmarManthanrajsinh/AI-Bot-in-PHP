@@ -136,7 +136,6 @@ while ($row = $result->fetch_assoc()) {
     $conversations[] = $row;
 }
 
-// Group conversations by session
 $groupedConversations = [];
 foreach ($conversations as $message) {
     $sessionId = $message['session_id'] ?: 'unknown';
@@ -153,7 +152,6 @@ foreach ($groupedConversations as $sessionId => $messages) {
     });
 }
 
-// Close database connection
 $conn->close();
 ?>
 

@@ -91,7 +91,6 @@ while ($row = $result->fetch_assoc()) {
     $userAgents[] = $row;
 }
 
-// Close database connection
 $conn->close();
 ?>
 

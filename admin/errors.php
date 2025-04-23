@@ -115,7 +115,6 @@ while ($row = $result->fetch_assoc()) {
     $recentErrors[] = $row;
 }
 
-// Close database connection
 $conn->close();
 ?>
 

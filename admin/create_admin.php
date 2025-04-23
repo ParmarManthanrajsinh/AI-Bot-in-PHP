@@ -1,7 +1,6 @@
 <?php
 session_start();
-include "../db_connect.php"; // Database connection
-// include "auth_check.php"; // Authentication check
+include "../db_connect.php";
 
 $success = false;
 $error = '';

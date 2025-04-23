@@ -78,7 +78,6 @@ while ($row = $result->fetch_assoc()) {
     $deviceTypes[] = $row;
 }
 
-// Close database connection
 $conn->close();
 ?>
 
