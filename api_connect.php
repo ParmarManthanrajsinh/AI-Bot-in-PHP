@@ -1,7 +1,7 @@
 <?php
 
 // API Configuration
-$apiKey = 'AIzaSyBqDbUeIzw_v5IMDEQ5FVXyG17bmNVLYNw'; // Replace with your actual API key
+$apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
 $model = 'gemini-2.0-flash';
 
 // Log API performance metrics
