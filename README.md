@@ -95,7 +95,7 @@ cd ai-bot
 1. Create a new MySQL database for the project
 
 ```sql
-CREATE DATABASE ai_bot_db;
+CREATE DATABASE ai_chat;
 ```
 
 2. Import the database schema
